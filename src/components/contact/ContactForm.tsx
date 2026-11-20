@@ -1,252 +1,204 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Sparkles, Flame, PhoneCall } from "lucide-react";
+import { CheckCircle2, MessageSquare, Send } from "lucide-react";
 import { PUNE_LOCALITIES } from "@/data/puneLocalities";
+import { SITE_DATA } from "@/content/site";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
-    bhk: "3 BHK",
-    budgetRange: "₹25L - ₹35L (Signature Luxury)",
-    timeline: "Immediate (Next 30 days)",
     locality: "Baner",
+    scope: "Full-Home Interior",
+    budget: "₹18L – ₹30L",
     notes: "",
-    whatsappConsent: true,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<{
-    score?: "Hot" | "Warm" | "Cold";
-    leadId?: string;
-    message?: string;
-  } | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/lead-capture", {
+      await fetch("/api/lead-capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          bhk: formData.scope,
+          budgetRange: formData.budget,
+          timeline: "Flexible",
+        }),
       });
-
-      const data = await res.json();
-      setSubmissionResult(data);
+      setSubmitted(true);
     } catch (err) {
-      setSubmissionResult({
-        score: "Warm",
-        message: "Thank you! Your request has been queued. We will call you shortly.",
-      });
+      setSubmitted(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="relative rounded-3xl bg-white/95 border border-[#E4DCCF] p-6 sm:p-10 backdrop-blur-2xl shadow-[0_16px_50px_rgba(22,22,29,0.07)]">
-      {submissionResult ? (
-        <div className="text-center py-10 space-y-5 animate-fadeIn">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 mx-auto">
-            <CheckCircle2 className="w-8 h-8" />
+    <div className="p-8 sm:p-10 bg-white border border-border rounded-[4px]">
+      {submitted ? (
+        <div className="py-8 space-y-4 text-center">
+          <div className="w-12 h-12 rounded-full bg-paper-alt border border-border flex items-center justify-center text-terracotta mx-auto">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
-
-          <div className="space-y-2 max-w-md mx-auto">
-            {submissionResult.score === "Hot" && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 text-xs font-bold">
-                <Flame className="w-3.5 h-3.5 fill-amber-600 text-amber-600" />
-                <span>Priority Consultation Unlocked (Hot Lead Tag)</span>
-              </div>
-            )}
-            <h3 className="text-2xl font-bold text-[#16161D]">
-              Consultation Scheduled!
-            </h3>
-            <p className="text-xs sm:text-sm text-[#5E5A55] font-normal leading-relaxed">
-              {submissionResult.message}
-            </p>
-            {submissionResult.leadId && (
-              <p className="text-[11px] font-mono text-[#8E6835] font-semibold">
-                Reference ID: {submissionResult.leadId}
-              </p>
-            )}
-          </div>
-
+          <h3 className="text-2xl font-serif font-normal text-ink">
+            Thank you for reaching out.
+          </h3>
+          <p className="text-sm text-text-muted max-w-md mx-auto leading-relaxed">
+            One of our Pune design team members will review your flat details and get in touch within one business day.
+          </p>
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href={`https://wa.me/919823092587?text=${encodeURIComponent(
-                `Hi Xalveriq, I just booked a consultation for my ${formData.bhk} in ${formData.locality} (Ref: ${submissionResult.leadId || "New Booking"}).`
+                `Hello Xalveriq, I just sent an inquiry for my ${formData.scope} in ${formData.locality}. Can we connect?`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-full bg-[#25D366] text-white font-bold text-xs transition-transform hover:scale-105 shadow-sm"
+              className="btn-terracotta text-xs py-2.5 px-5 rounded-[4px]"
             >
               Continue on WhatsApp Now
             </a>
             <button
-              onClick={() => setSubmissionResult(null)}
-              className="px-6 py-3 rounded-full btn-secondary-light text-xs font-semibold"
+              onClick={() => setSubmitted(false)}
+              className="btn-outline text-xs py-2.5 px-5 rounded-[4px]"
             >
-              Submit Another Request
+              Submit another query
             </button>
           </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E4DCCF] text-[#8E6835] text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#B08A57]" />
-              <span>Direct Architect Booking</span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#16161D]">
-              Book Your Free Spatial Consultation
-            </h3>
-            <p className="text-xs sm:text-sm text-[#5E5A55] font-normal">
-              Visit our Koregaon Park or Baner studio, or request an in-person site visit anywhere in Pune.
+            <span className="plan-note">Initial Consultation</span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-normal text-ink">
+              Tell us about your flat.
+            </h2>
+            <p className="text-xs text-text-muted">
+              Fill in these 6 details and we will schedule an initial site or studio meeting.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">Full Name *</label>
+            {/* 1. Name */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">1. Your Name *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. Vikram Patil"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] placeholder-[#5E5A55]/60 focus:outline-none focus:border-[#6D4AFF]"
+                className="studio-input"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">WhatsApp Phone Number *</label>
+            {/* 2. Phone */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">2. Phone / WhatsApp *</label>
               <input
                 type="tel"
                 required
                 placeholder="e.g. +91 98230 12345"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] placeholder-[#5E5A55]/60 focus:outline-none focus:border-[#6D4AFF]"
+                className="studio-input"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">Apartment Configuration</label>
-              <select
-                value={formData.bhk}
-                onChange={(e) => setFormData({ ...formData, bhk: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] focus:outline-none focus:border-[#6D4AFF]"
-              >
-                {["1 BHK", "2 BHK", "2.5 BHK", "3 BHK", "4 BHK Duplex", "Penthouse / Luxury Villa"].map((bhk) => (
-                  <option key={bhk} value={bhk} className="bg-white text-[#16161D]">
-                    {bhk}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">Pune Neighborhood / Society</label>
+            {/* 3. Area in Pune */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">3. Area in Pune *</label>
               <select
                 value={formData.locality}
                 onChange={(e) => setFormData({ ...formData, locality: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] focus:outline-none focus:border-[#6D4AFF]"
+                className="studio-input bg-white"
               >
                 {PUNE_LOCALITIES.map((loc) => (
-                  <option key={loc.id} value={loc.name} className="bg-white text-[#16161D]">
-                    {loc.name}
+                  <option key={loc.id} value={loc.name}>
+                    {loc.name} ({loc.zone})
                   </option>
                 ))}
               </select>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">Estimated Budget Range</label>
+            {/* 4. What you want done */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">4. Scope / What You Need *</label>
               <select
-                value={formData.budgetRange}
-                onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] focus:outline-none focus:border-[#6D4AFF]"
+                value={formData.scope}
+                onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
+                className="studio-input bg-white"
               >
-                {[
-                  "₹15L - ₹25L (Essential Elegance)",
-                  "₹25L - ₹40L (Signature Luxury)",
-                  "₹40L - ₹65L (Haute Architectural)",
-                  "₹65L+ (Ultra-Luxury Penthouse)",
-                ].map((b) => (
-                  <option key={b} value={b} className="bg-white text-[#16161D]">
-                    {b}
-                  </option>
-                ))}
+                <option value="Full-Home Interior (Turnkey)">Full-Home Interior (Turnkey)</option>
+                <option value="Modular Kitchen Only">Modular Kitchen Only</option>
+                <option value="Wardrobes & Custom Storage">Wardrobes & Custom Storage</option>
+                <option value="Commercial / Studio Office">Commercial / Studio Office</option>
+                <option value="Renovation & Civil Alterations">Renovation & Civil Alterations</option>
               </select>
             </div>
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#16161D]">Possession / Start Timeline</label>
+          <div className="grid grid-cols-1 gap-4">
+            {/* 5. Rough Budget */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">5. Rough Budget Guidance</label>
               <select
-                value={formData.timeline}
-                onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] focus:outline-none focus:border-[#6D4AFF]"
+                value={formData.budget}
+                onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                className="studio-input bg-white"
               >
-                {[
-                  "Immediate (Next 30 days)",
-                  "1 - 2 Months",
-                  "3 - 6 Months",
-                  "Currently Exploring Designs",
-                ].map((t) => (
-                  <option key={t} value={t} className="bg-white text-[#16161D]">
-                    {t}
-                  </option>
-                ))}
+                <option value="Under ₹15 Lakhs">Under ₹15 Lakhs</option>
+                <option value="₹15L – ₹25L">₹15L – ₹25L (Standard 2 & 3 BHK)</option>
+                <option value="₹25L – ₹40L">₹25L – ₹40L (Comprehensive 3 & 4 BHK)</option>
+                <option value="Above ₹40 Lakhs">Above ₹40 Lakhs (Penthouse / Villa)</option>
+                <option value="Unsure / Need Advice">Unsure / Need Advice</option>
               </select>
+            </div>
+
+            {/* 6. Notes about flat */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-ink">
+                6. Details about your flat (Optional)
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Mention apartment society name, key handover status, or particular storage priorities..."
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                className="studio-input resize-none"
+              />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#16161D]">Special Notes or Society Name (Optional)</label>
-            <textarea
-              rows={2}
-              placeholder="e.g. Panchshil Towers Tower C 14th floor, possession in 20 days. Need Italian marble and modular kitchen."
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] placeholder-[#5E5A55]/60 focus:outline-none focus:border-[#6D4AFF]"
-            />
-          </div>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-terracotta w-full sm:w-auto text-xs py-3 px-6 rounded-[4px]"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>{isSubmitting ? "Sending..." : "Submit Inquiry"}</span>
+            </button>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="whatsappConsent"
-              checked={formData.whatsappConsent}
-              onChange={(e) => setFormData({ ...formData, whatsappConsent: e.target.checked })}
-              className="w-4 h-4 rounded bg-[#FAF7F2] border-[#E4DCCF] accent-[#B08A57]"
-            />
-            <label htmlFor="whatsappConsent" className="text-xs text-[#5E5A55]">
-              Send 3D concepts, floor plan previews, and BOQ updates to my WhatsApp
-            </label>
+            <a
+              href={`https://wa.me/919823092587`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-text-muted hover:text-ink inline-flex items-center gap-1.5"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
+              <span>Prefer WhatsApp? Chat directly</span>
+            </a>
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-4 rounded-full btn-primary-gradient text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {isSubmitting ? (
-              <span>Scheduling Consultation...</span>
-            ) : (
-              <>
-                <PhoneCall className="w-4 h-4" />
-                <span>Confirm My Free Architectural Consultation</span>
-              </>
-            )}
-          </button>
         </form>
       )}
     </div>

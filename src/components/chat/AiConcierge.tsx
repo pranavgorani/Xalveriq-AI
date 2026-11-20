@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Sparkles, X, Send, Bot, Cpu } from "lucide-react";
+import { X, Send, MessageSquare } from "lucide-react";
+import { SITE_DATA } from "@/content/site";
 
 interface ChatMessage {
   id: string;
@@ -17,7 +18,7 @@ export function AiConcierge() {
     {
       id: "intro-1",
       role: "assistant",
-      text: "Namaste! I am the Xalveriq AI Concierge. Ask me about our 45-day handover guarantee, turnkey interior pricing across Pune, or our German factory joinery.",
+      text: `Hello. I am the Xalveriq studio assistant. Ask me anything about our typical timelines, what is included in full-home interiors in Pune, or how we plan your space.`,
       timestamp: "Just now",
     },
   ]);
@@ -26,9 +27,9 @@ export function AiConcierge() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const quickPrompts = [
-    "What is your 45-day guarantee?",
-    "Cost of 3 BHK in Baner?",
-    "What materials & warranty?",
+    "Typical cost for a 3 BHK?",
+    "How does your process work?",
+    "What materials do you use?",
     "Visit Koregaon Park studio",
   ];
 
@@ -36,7 +37,6 @@ export function AiConcierge() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, typingDisplayText]);
 
-  // Simulates typewriter streaming for a realistic AI feel
   const streamBotResponse = (fullText: string) => {
     setIsTyping(false);
     setTypingDisplayText("");
@@ -86,7 +86,7 @@ export function AiConcierge() {
       });
 
       const data = await res.json();
-      const replyText = data.reply || "Thank you for asking. Our Pune architectural team is available to assist you.";
+      const replyText = data.reply || "Thank you. Our Pune team can review your specific layout during a consultation.";
       streamBotResponse(replyText);
     } catch (err) {
       setIsTyping(false);
@@ -95,7 +95,7 @@ export function AiConcierge() {
         {
           id: `bot-${Date.now()}`,
           role: "assistant",
-          text: "I'm having a brief connection pause, but you can always reach our Pune studio directly on WhatsApp at +91 98230 92587.",
+          text: `You can reach our design team directly via WhatsApp at ${SITE_DATA.contact.phone} for immediate queries.`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -109,24 +109,18 @@ export function AiConcierge() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group flex items-center gap-3 px-4.5 py-3 rounded-full bg-white/95 hover:bg-white border border-[#E4DCCF] hover:border-[#6D4AFF] text-[#16161D] shadow-[0_10px_35px_-5px_rgba(109,74,255,0.22)] backdrop-blur-xl transition-all duration-300 hover:scale-105"
-            aria-label="Open Ask Xalveriq AI Concierge"
+            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-[4px] bg-white border border-border hover:border-ink text-ink shadow-soft transition-all duration-200"
+            aria-label="Open Studio AI Assistant"
           >
-            <div className="relative">
-              <div className="w-8 h-8 rounded-full btn-primary-gradient flex items-center justify-center text-white shadow-xs">
-                <Sparkles className="w-4 h-4 animate-pulse" />
-              </div>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#14A8D6] animate-ping" />
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#14A8D6]" />
+            <div className="w-6 h-6 rounded-[2px] bg-paper-alt flex items-center justify-center text-ink">
+              <MessageSquare className="w-3.5 h-3.5 text-terracotta" />
             </div>
-
-            <div className="flex flex-col text-left pr-1">
-              <span className="text-[10px] text-[#14A8D6] font-bold tracking-wider uppercase flex items-center gap-1">
-                <Cpu className="w-2.5 h-2.5" />
-                <span>AI Concierge</span>
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] text-text-muted uppercase tracking-wider font-sans">
+                Studio Assistant
               </span>
-              <span className="text-xs font-bold text-[#16161D] group-hover:text-[#6D4AFF] transition-colors">
-                Ask Xalveriq AI
+              <span className="text-xs font-medium text-ink">
+                Ask a Question
               </span>
             </div>
           </button>
@@ -135,59 +129,46 @@ export function AiConcierge() {
 
       {/* Floating Chat Modal */}
       {isOpen && (
-        <div className="fixed bottom-6 left-6 z-50 w-[92vw] sm:w-[420px] h-[560px] max-h-[85vh] rounded-3xl bg-white/95 border border-[#E4DCCF] shadow-[0_20px_60px_-10px_rgba(22,22,29,0.18)] backdrop-blur-2xl flex flex-col overflow-hidden animate-fadeIn">
+        <div className="fixed bottom-6 left-6 z-50 w-[92vw] sm:w-[380px] h-[520px] max-h-[85vh] rounded-[4px] bg-white border border-border shadow-card flex flex-col overflow-hidden animate-fadeIn">
           {/* Header */}
-          <div className="p-4 border-b border-[#E4DCCF] bg-[#FAF7F2]/80 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl btn-primary-gradient p-[1px]">
-                <div className="w-full h-full bg-white rounded-[11px] flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-[#6D4AFF]" />
-                </div>
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-[#16161D] flex items-center gap-1.5">
-                  <span>Ask Xalveriq AI</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                </h4>
-                <p className="text-[10px] text-[#5E5A55]">
-                  Pune Interior Intelligence & Pricing
-                </p>
-              </div>
+          <div className="p-4 border-b border-border bg-paper flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-serif font-normal text-ink">
+                Xalveriq Assistant
+              </h4>
+              <p className="text-[11px] text-text-muted">
+                Answers regarding Pune flat planning & process
+              </p>
             </div>
-
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 rounded-lg text-[#5E5A55] hover:text-[#16161D] hover:bg-[#FAF7F2] transition-colors"
-              aria-label="Close Concierge"
+              className="p-1.5 text-text-muted hover:text-ink transition-colors"
+              aria-label="Close Assistant"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs bg-[#FAF7F2]/40">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs bg-paper/40">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex gap-2.5 ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {msg.role === "assistant" && (
-                  <div className="w-6 h-6 rounded-full bg-white border border-[#E4DCCF] flex items-center justify-center text-[#6D4AFF] shrink-0 mt-0.5 shadow-xs">
-                    <Sparkles className="w-3 h-3" />
-                  </div>
-                )}
-
                 <div
-                  className={`max-w-[82%] rounded-2xl p-3.5 leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[85%] rounded-[4px] p-3 leading-relaxed whitespace-pre-wrap ${
                     msg.role === "user"
-                      ? "btn-primary-gradient text-white shadow-sm"
-                      : "bg-white border border-[#E4DCCF] text-[#16161D] shadow-xs"
+                      ? "bg-terracotta text-white"
+                      : "bg-white border border-border text-ink"
                   }`}
                 >
                   {msg.text}
-                  <span className={`text-[9px] block text-right mt-1 font-mono ${msg.role === "user" ? "text-white/80" : "text-[#5E5A55]"}`}>
+                  <span
+                    className={`text-[9px] block text-right mt-1 font-mono ${
+                      msg.role === "user" ? "text-white/80" : "text-text-muted"
+                    }`}
+                  >
                     {msg.timestamp}
                   </span>
                 </div>
@@ -196,36 +177,29 @@ export function AiConcierge() {
 
             {/* Typewriter Streaming Bubble */}
             {typingDisplayText && (
-              <div className="flex gap-2.5 justify-start">
-                <div className="w-6 h-6 rounded-full bg-white border border-[#E4DCCF] flex items-center justify-center text-[#6D4AFF] shrink-0 mt-0.5 shadow-xs">
-                  <Sparkles className="w-3 h-3" />
-                </div>
-                <div className="max-w-[82%] rounded-2xl p-3.5 leading-relaxed bg-white border border-[#14A8D6]/50 text-[#16161D] shadow-xs">
+              <div className="flex justify-start">
+                <div className="max-w-[85%] rounded-[4px] p-3 leading-relaxed bg-white border border-border text-ink">
                   {typingDisplayText}
-                  <span className="inline-block w-1.5 h-3 ml-1 bg-[#14A8D6] animate-pulse" />
+                  <span className="inline-block w-1.5 h-3 ml-1 bg-terracotta animate-pulse" />
                 </div>
               </div>
             )}
 
-            {/* Loading Indicator when awaiting API */}
             {isTyping && !typingDisplayText && (
-              <div className="flex items-center gap-2 text-[#5E5A55] text-xs pl-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#14A8D6] animate-bounce" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6D4AFF] animate-bounce [animation-delay:0.2s]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#B08A57] animate-bounce [animation-delay:0.4s]" />
-                <span className="text-[10px] font-mono text-[#5E5A55]">Synthesizing architectural knowledge...</span>
+              <div className="text-[11px] text-text-muted pl-1 italic">
+                Thinking...
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts Carousel */}
-          <div className="px-4 py-2 border-t border-[#E4DCCF] bg-[#F1EBE1]/60 overflow-x-auto no-scrollbar flex items-center gap-2">
+          {/* Quick Prompts */}
+          <div className="px-3 py-2 border-t border-border bg-paper/60 overflow-x-auto no-scrollbar flex items-center gap-1.5">
             {quickPrompts.map((prompt, i) => (
               <button
                 key={i}
                 onClick={() => handleSend(prompt)}
-                className="shrink-0 px-3 py-1 rounded-full bg-white hover:bg-[#FAF7F2] border border-[#E4DCCF] hover:border-[#B08A57] text-[10px] text-[#5E5A55] hover:text-[#16161D] font-medium transition-all whitespace-nowrap shadow-xs"
+                className="shrink-0 px-2.5 py-1 rounded-[2px] bg-white border border-border hover:border-ink text-[11px] text-text-muted hover:text-ink transition-all whitespace-nowrap"
               >
                 {prompt}
               </button>
@@ -238,20 +212,20 @@ export function AiConcierge() {
               e.preventDefault();
               handleSend();
             }}
-            className="p-3 border-t border-[#E4DCCF] bg-white flex items-center gap-2"
+            className="p-3 border-t border-border bg-white flex items-center gap-2"
           >
             <input
               type="text"
-              placeholder="Ask about 45-day guarantee, Pune pricing..."
+              placeholder="Ask about Pune projects, costs, or process..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E4DCCF] text-xs text-[#16161D] placeholder-[#5E5A55]/60 focus:outline-none focus:border-[#6D4AFF]"
+              className="flex-1 px-3 py-2 border border-border rounded-[4px] text-xs text-ink focus:outline-none focus:border-ink placeholder:text-[#9C958B]"
             />
             <button
               type="submit"
               disabled={!input.trim()}
-              className="p-2.5 rounded-xl btn-primary-gradient text-white disabled:opacity-40 transition-opacity shadow-sm"
-              aria-label="Send Message"
+              className="p-2.5 bg-terracotta text-white rounded-[4px] disabled:opacity-40 transition-opacity"
+              aria-label="Send"
             >
               <Send className="w-3.5 h-3.5" />
             </button>

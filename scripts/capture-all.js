@@ -13,6 +13,8 @@ const PAGES = [
   { name: 'about', route: '/about' },
   { name: 'blog', route: '/blog' },
   { name: 'contact', route: '/contact' },
+  { name: 'privacy', route: '/privacy' },
+  { name: 'terms', route: '/terms' },
 ];
 
 const VIEWPORTS = [
@@ -21,7 +23,7 @@ const VIEWPORTS = [
 ];
 
 const round = process.argv[2] || 'round1';
-const outputDir = path.resolve(__dirname, '..', 'screenshots', 'light_theme', round);
+const outputDir = path.resolve(__dirname, '..', 'screenshots', 'humanize', round);
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });

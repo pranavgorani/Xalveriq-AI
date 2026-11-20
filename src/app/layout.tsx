@@ -5,39 +5,27 @@ import { Footer } from "@/components/layout/Footer";
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { AiConcierge } from "@/components/chat/AiConcierge";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
-import { FloatingDecor } from "@/components/motion/FloatingDecor";
+import { SITE_DATA } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Xalveriq | Futuristic AI-Powered Interior Architecture in Pune",
+  title: "Xalveriq | Interior Design Studio in Pune",
   description:
-    "Spaces, Intelligently Designed. Experience weightless antigravity luxury interiors for 2, 3, 4 BHK apartments & penthouses across Pune (Koregaon Park, Baner, Kharadi). 45-day handover guarantee with 10-year warranty.",
-  keywords: [
-    "interior designers in Pune",
-    "luxury interior designers Pune",
-    "AI interior design Pune",
-    "turnkey interiors Pune",
-    "modular kitchen Pune",
-    "interior designers Baner",
-    "interior designers Koregaon Park",
-    "interior designers Kharadi",
-    "Panchshil Towers interiors",
-    "Amanora interiors",
-    "45 day interior handover Pune",
-  ],
-  authors: [{ name: "Xalveriq Architectural Studio" }],
+    "Homes designed around how you live. We are a Pune interior design studio planning, detailing, and building full-home interiors, modular kitchens, and custom wardrobes.",
+  metadataBase: new URL(SITE_DATA.productionUrl),
+  authors: [{ name: "Xalveriq Interior Studio" }],
   creator: "Xalveriq",
   openGraph: {
-    title: "Xalveriq | Spaces, Intelligently Designed (Pune)",
+    title: "Xalveriq | Interior Design Studio, Pune",
     description:
-      "Transforming raw builder handovers into bespoke, weightless luxury sanctuaries in 45 days. Powered by proprietary AI spatial intelligence.",
-    url: "https://xalveriq.com",
-    siteName: "Xalveriq Pune",
+      "Homes designed around how you live. Full-home interiors, modular kitchens, and custom wardrobes in Pune.",
+    url: SITE_DATA.productionUrl,
+    siteName: "Xalveriq",
     images: [
       {
         url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
         width: 1200,
         height: 630,
-        alt: "Xalveriq Luxury Interior Architecture Pune",
+        alt: "Xalveriq Interior Design Studio Pune",
       },
     ],
     locale: "en_IN",
@@ -56,11 +44,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-[var(--bg)] text-[var(--text)] antialiased selection:bg-[var(--gold)]/20 selection:text-[var(--text)] relative">
+      <body className="bg-paper text-ink antialiased selection:bg-terracotta/20 selection:text-ink relative">
         <SmoothScroll>
-          <FloatingDecor />
           <Navbar />
-          <main className="min-h-screen relative z-10">{children}</main>
+          <main className="min-h-screen relative">{children}</main>
           <Footer />
           <WhatsAppFloat />
           <AiConcierge />

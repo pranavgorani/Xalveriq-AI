@@ -9,98 +9,70 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* Core Light Theme Tokens */
+        /* Calm Architectural Paper & Ink Palette */
         bg: "var(--bg)",
-        "bg-alt": "var(--bg-alt)",
-        surface: "var(--surface)",
-        "surface-solid": "var(--surface-solid)",
-        "surface-elevated": "var(--surface-elevated)",
-        text: "var(--text)",
-        "text-muted": "var(--text-muted)",
-        border: "var(--border)",
-        "border-subtle": "var(--border-subtle)",
-        gold: {
-          DEFAULT: "var(--gold)",
-          light: "#DFBA87",
-          300: "#CDB084",
-          400: "#B08A57",
-          500: "#9C7541",
-          600: "#805E32",
-        },
-        violet: {
-          DEFAULT: "var(--violet)",
-          300: "#A992FF",
-          400: "#8869FF",
-          500: "#6D4AFF",
-          600: "#5532E6",
-        },
-        cyan: {
-          DEFAULT: "var(--cyan)",
-          300: "#58C8EB",
-          400: "#14A8D6",
-          500: "#0F85AA",
+        paper: {
+          DEFAULT: "var(--paper)",
+          alt: "var(--paper-alt)",
+          card: "var(--surface)",
         },
         ink: {
           DEFAULT: "var(--ink)",
-          surface: "var(--ink-surface)",
-          900: "#12121A",
-          800: "#181824",
+          pure: "#1B1B1B",
+          subtle: "#2A2A2A",
         },
-        /* Backward compatibility aliases */
-        space: {
-          950: "var(--bg)",
-          900: "var(--bg-alt)",
-          850: "var(--surface-solid)",
-          800: "var(--bg-alt)",
-          700: "var(--border)",
+        text: {
+          DEFAULT: "var(--text)",
+          muted: "var(--text-muted)",
         },
-        pearl: {
-          100: "var(--text)",
-          200: "var(--text)",
-          300: "var(--text-muted)",
-          400: "#827C75",
+        border: {
+          DEFAULT: "var(--border)",
+          subtle: "rgba(221, 213, 200, 0.6)",
+        },
+        /* ONE ACCENT ONLY: Deep Terracotta */
+        terracotta: {
+          DEFAULT: "var(--terracotta)",
+          hover: "var(--terracotta-hover)",
+          light: "var(--terracotta-light)",
+        },
+        accent: "var(--terracotta)",
+
+        /* Backward-compat aliases mapped safely to calm palette */
+        "bg-alt": "var(--paper-alt)",
+        surface: "var(--surface)",
+        "surface-solid": "var(--surface)",
+        "text-muted": "var(--text-muted)",
+        gold: {
+          DEFAULT: "var(--terracotta)",
+          400: "var(--terracotta)",
+          500: "var(--terracotta)",
+        },
+        violet: {
+          DEFAULT: "var(--terracotta)",
+          500: "var(--terracotta)",
+        },
+        cyan: {
+          DEFAULT: "var(--terracotta)",
+          400: "var(--terracotta)",
         },
       },
       fontFamily: {
+        serif: ["var(--font-fraunces)", "serif"],
+        display: ["var(--font-fraunces)", "serif"],
+        heading: ["var(--font-fraunces)", "serif"],
         sans: ["var(--font-inter)", "sans-serif"],
-        display: ["var(--font-space-grotesk)", "sans-serif"],
-        heading: ["var(--font-sora)", "sans-serif"],
       },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "radial-glow": "radial-gradient(circle at 50% 0%, rgba(109, 74, 255, 0.08) 0%, rgba(250, 247, 242, 0) 70%)",
-        "gold-glow": "radial-gradient(circle at 50% 50%, rgba(176, 138, 87, 0.1) 0%, rgba(250, 247, 242, 0) 75%)",
-        "heading-gradient": "linear-gradient(135deg, #6D4AFF 0%, #14A8D6 50%, #B08A57 100%)",
-        "btn-gradient": "linear-gradient(135deg, #6D4AFF 0%, #14A8D6 100%)",
+      borderRadius: {
+        DEFAULT: "4px",
+        sm: "2px",
+        md: "4px",
+        lg: "4px",
+        xl: "6px",
       },
       boxShadow: {
-        card: "0 10px 40px rgba(22, 22, 29, 0.06)",
-        "card-hover": "0 20px 50px -10px rgba(109, 74, 255, 0.14), 0 0 25px rgba(20, 168, 214, 0.1)",
-        "btn-glow": "0 8px 24px -4px rgba(109, 74, 255, 0.35)",
-        floating: "0 24px 60px -12px rgba(22, 22, 29, 0.12)",
-      },
-      animation: {
-        "float-slow": "float 8s ease-in-out infinite",
-        "float-delayed": "float 9s ease-in-out 3s infinite",
-        "pulse-subtle": "pulseSubtle 4s ease-in-out infinite",
-        "shimmer": "shimmer 2.5s infinite linear",
-      },
-      keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
-          "50%": { transform: "translateY(-12px) rotate(1deg)" },
-        },
-        pulseSubtle: {
-          "0%, 100%": { opacity: "0.4" },
-          "50%": { opacity: "0.8" },
-        },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
-      },
-      backdropBlur: {
-        xs: "2px",
+        soft: "0 2px 10px rgba(27, 27, 27, 0.03)",
+        card: "0 4px 20px rgba(27, 27, 27, 0.04)",
+        "card-hover": "0 8px 30px rgba(27, 27, 27, 0.07)",
       },
     },
   },
