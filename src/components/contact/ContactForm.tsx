@@ -1,203 +1,305 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, MessageSquare, Send } from "lucide-react";
-import { PUNE_LOCALITIES } from "@/data/puneLocalities";
+import { CheckCircle2, MessageSquare, Send, ArrowRight, ShieldCheck } from "lucide-react";
 import { SITE_DATA } from "@/content/site";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    locality: "Baner",
-    scope: "Full-Home Interior",
-    budget: "₹18L – ₹30L",
-    notes: "",
+    email: "",
+    city: "Nashik",
+    propertyType: "3 BHK",
+    designScope: "Full Home Interior",
+    estimatedBudget: "₹15,00,000 – ₹25,00,000",
+    details: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [leadRef, setLeadRef] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (errorMessage) setErrorMessage("");
+  };
+
+  const validatePhone = (phoneStr: string) => {
+    const digits = phoneStr.replace(/[\s\-\+\(\)]/g, "").slice(-10);
+    return /^[6-9]\d{9}$/.test(digits);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.name.trim()) {
+      setErrorMessage("Please enter your full name.");
+      return;
+    }
+
+    if (!validatePhone(formData.phone)) {
+      setErrorMessage("Please enter a valid 10-digit Indian mobile number (e.g. 98230 XXXXX).");
+      return;
+    }
+
     setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
-      await fetch("/api/lead-capture", {
+      const res = await fetch("/api/lead-capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          bhk: formData.scope,
-          budgetRange: formData.budget,
-          timeline: "Flexible",
-        }),
+        body: JSON.stringify(formData),
       });
+
+      const result = await res.json();
+
+      if (!res.ok || result.error) {
+        throw new Error(result.error || "Failed to submit request.");
+      }
+
+      setLeadRef(result.leadId || `XLV-${Date.now().toString().slice(-6)}`);
       setSubmitted(true);
-    } catch (err) {
-      setSubmitted(true);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to submit. Please chat with us on WhatsApp.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const whatsappMessage = encodeURIComponent(
+    `Hello Xalveriq Studio, I would like to book an initial design consultation.\n\nName: ${formData.name || "Homeowner"}\nLocation: ${formData.city}\nProperty: ${formData.propertyType}\nScope: ${formData.designScope}\nEstimated Budget: ${formData.estimatedBudget}\nNotes: ${formData.details || "Looking forward to speaking with your senior architect."}`
+  );
+
   return (
-    <div className="p-8 sm:p-10 bg-white border border-border rounded-[4px]">
+    <div className="p-8 sm:p-10 bg-white border border-[#E0D7C9] rounded-2xl shadow-card">
       {submitted ? (
-        <div className="py-8 space-y-4 text-center">
-          <div className="w-12 h-12 rounded-full bg-paper-alt border border-border flex items-center justify-center text-terracotta mx-auto">
-            <CheckCircle2 className="w-6 h-6" />
+        <div className="py-8 space-y-5 text-center">
+          <div className="w-14 h-14 rounded-full bg-bronze/10 border-2 border-bronze text-bronze flex items-center justify-center mx-auto">
+            <CheckCircle2 className="w-7 h-7 text-bronze" />
           </div>
-          <h3 className="text-2xl font-serif font-normal text-ink">
-            Thank you for reaching out.
-          </h3>
-          <p className="text-sm text-text-muted max-w-md mx-auto leading-relaxed">
-            One of our Pune design team members will review your flat details and get in touch within one business day.
-          </p>
+
+          <div className="space-y-1">
+            <span className="text-xs font-mono uppercase tracking-widest text-bronze font-semibold">
+              Reference ID: {leadRef}
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-serif text-[#18181B]">
+              Consultation Scheduled
+            </h3>
+            <p className="text-sm text-[#645F58] max-w-md mx-auto leading-relaxed">
+              Thank you, <strong className="text-[#18181B]">{formData.name}</strong>. Our senior architectural lead will review your {formData.propertyType} in {formData.city} and contact you within 4 business hours.
+            </p>
+          </div>
+
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href={`https://wa.me/919823092587?text=${encodeURIComponent(
-                `Hello Xalveriq, I just sent an inquiry for my ${formData.scope} in ${formData.locality}. Can we connect?`
+              href={`https://wa.me/${SITE_DATA.contact.whatsapp}?text=${encodeURIComponent(
+                `Hi Xalveriq, I just booked a consultation (Ref: ${leadRef}) for my ${formData.propertyType} in ${formData.city}. Sending floor plan.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-terracotta text-xs py-2.5 px-5 rounded-[4px]"
+              className="btn-bronze text-xs py-3 px-5 rounded-lg inline-flex items-center gap-2"
             >
-              Continue on WhatsApp Now
+              <MessageSquare className="w-4 h-4" />
+              <span>Share Floor Plan on WhatsApp Now</span>
             </a>
             <button
               onClick={() => setSubmitted(false)}
-              className="btn-outline text-xs py-2.5 px-5 rounded-[4px]"
+              className="btn-outline text-xs py-3 px-5 rounded-lg"
             >
-              Submit another query
+              Submit Another Inquiry
             </button>
           </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-1">
-            <span className="plan-note">Initial Consultation</span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-normal text-ink">
-              Tell us about your flat.
-            </h2>
-            <p className="text-xs text-text-muted">
-              Fill in these 6 details and we will schedule an initial site or studio meeting.
+          <div className="border-b border-[#ECE5DA] pb-4">
+            <span className="text-xs font-semibold text-bronze uppercase tracking-widest block mb-1">
+              INITIAL CONSULTATION
+            </span>
+            <h3 className="font-serif text-2xl text-[#18181B]">
+              Tell Us About Your Dream Home.
+            </h3>
+            <p className="text-xs text-[#645F58] mt-1">
+              Share a few details about your property and requirements. Our design team will contact you to schedule your consultation.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* 1. Name */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">1. Your Name *</label>
+          {errorMessage && (
+            <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
+              {errorMessage}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+            {/* 1. Full Name */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Full Name <span className="text-bronze">*</span>
+              </label>
               <input
                 type="text"
+                name="name"
                 required
-                placeholder="e.g. Vikram Patil"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="studio-input"
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
               />
             </div>
 
-            {/* 2. Phone */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">2. Phone / WhatsApp *</label>
+            {/* 2. Mobile / WhatsApp Number */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Mobile / WhatsApp Number <span className="text-bronze">*</span>
+              </label>
               <input
                 type="tel"
+                name="phone"
                 required
-                placeholder="e.g. +91 98230 12345"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="studio-input"
+                onChange={handleChange}
+                placeholder="+91 XXXXX XXXXX"
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* 3. Area in Pune */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">3. Area in Pune *</label>
-              <select
-                value={formData.locality}
-                onChange={(e) => setFormData({ ...formData, locality: e.target.value })}
-                className="studio-input bg-white"
-              >
-                {PUNE_LOCALITIES.map((loc) => (
-                  <option key={loc.id} value={loc.name}>
-                    {loc.name} ({loc.zone})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 4. What you want done */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">4. Scope / What You Need *</label>
-              <select
-                value={formData.scope}
-                onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
-                className="studio-input bg-white"
-              >
-                <option value="Full-Home Interior (Turnkey)">Full-Home Interior (Turnkey)</option>
-                <option value="Modular Kitchen Only">Modular Kitchen Only</option>
-                <option value="Wardrobes & Custom Storage">Wardrobes & Custom Storage</option>
-                <option value="Commercial / Studio Office">Commercial / Studio Office</option>
-                <option value="Renovation & Civil Alterations">Renovation & Civil Alterations</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            {/* 5. Rough Budget */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">5. Rough Budget Guidance</label>
-              <select
-                value={formData.budget}
-                onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                className="studio-input bg-white"
-              >
-                <option value="Under ₹15 Lakhs">Under ₹15 Lakhs</option>
-                <option value="₹15L – ₹25L">₹15L – ₹25L (Standard 2 & 3 BHK)</option>
-                <option value="₹25L – ₹40L">₹25L – ₹40L (Comprehensive 3 & 4 BHK)</option>
-                <option value="Above ₹40 Lakhs">Above ₹40 Lakhs (Penthouse / Villa)</option>
-                <option value="Unsure / Need Advice">Unsure / Need Advice</option>
-              </select>
-            </div>
-
-            {/* 6. Notes about flat */}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-ink">
-                6. Details about your flat (Optional)
+            {/* 3. Email Address */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Email Address
               </label>
-              <textarea
-                rows={3}
-                placeholder="Mention apartment society name, key handover status, or particular storage priorities..."
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="studio-input resize-none"
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email address"
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
               />
+            </div>
+
+            {/* 4. City / Location */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                City / Location <span className="text-bronze">*</span>
+              </label>
+              <select
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
+              >
+                <option value="Nashik">Nashik</option>
+                <option value="Pune">Pune</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {/* 5. Property Type */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Property Type <span className="text-bronze">*</span>
+              </label>
+              <select
+                name="propertyType"
+                value={formData.propertyType}
+                onChange={handleChange}
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
+              >
+                <option value="1 BHK">1 BHK</option>
+                <option value="2 BHK">2 BHK</option>
+                <option value="3 BHK">3 BHK</option>
+                <option value="4 BHK">4 BHK</option>
+                <option value="Villa">Villa</option>
+                <option value="Penthouse">Penthouse</option>
+                <option value="Commercial Property">Commercial Property</option>
+              </select>
+            </div>
+
+            {/* 6. Design Scope */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Design Scope <span className="text-bronze">*</span>
+              </label>
+              <select
+                name="designScope"
+                value={formData.designScope}
+                onChange={handleChange}
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
+              >
+                <option value="Full Home Interior">Full Home Interior</option>
+                <option value="Modular Kitchen">Modular Kitchen</option>
+                <option value="Living Room">Living Room</option>
+                <option value="Bedroom">Bedroom</option>
+                <option value="Bathroom">Bathroom</option>
+                <option value="Renovation & Turnkey">Renovation & Turnkey</option>
+                <option value="Complete Interior + Civil Work">Complete Interior + Civil Work</option>
+              </select>
+            </div>
+
+            {/* 7. Estimated Budget */}
+            <div className="sm:col-span-2 space-y-1.5">
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Estimated Budget <span className="text-bronze">*</span>
+              </label>
+              <select
+                name="estimatedBudget"
+                value={formData.estimatedBudget}
+                onChange={handleChange}
+                className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze"
+              >
+                <option value="Under ₹5,00,000">Under ₹5,00,000</option>
+                <option value="₹5,00,000 – ₹10,00,000">₹5,00,000 – ₹10,00,000</option>
+                <option value="₹10,00,000 – ₹15,00,000">₹10,00,000 – ₹15,00,000</option>
+                <option value="₹15,00,000 – ₹25,00,000">₹15,00,000 – ₹25,00,000</option>
+                <option value="₹25,00,000 – ₹40,00,000">₹25,00,000 – ₹40,00,000</option>
+                <option value="₹40,00,000 – ₹75,00,000">₹40,00,000 – ₹75,00,000</option>
+                <option value="Above ₹75,00,000">Above ₹75,00,000</option>
+              </select>
             </div>
           </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-terracotta w-full sm:w-auto text-xs py-3 px-6 rounded-[4px]"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? "Sending..." : "Submit Inquiry"}</span>
-            </button>
+          {/* 8. Project Details Textarea */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#18181B]">
+              Project Details <span className="text-xs font-normal text-[#645F58]">(Optional)</span>
+            </label>
+            <textarea
+              name="details"
+              rows={4}
+              value={formData.details}
+              onChange={handleChange}
+              placeholder="Tell us about your apartment, society name, handover status, preferred design, or special requirements."
+              className="w-full p-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze resize-y min-h-[110px]"
+            />
+          </div>
 
-            <a
-              href={`https://wa.me/919823092587`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-medium text-text-muted hover:text-ink inline-flex items-center gap-1.5"
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
-              <span>Prefer WhatsApp? Chat directly</span>
-            </a>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full btn-bronze py-4 rounded-lg font-semibold text-sm tracking-wide flex items-center justify-center gap-2 shadow-card cursor-pointer disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <span>Scheduling Consultation...</span>
+            ) : (
+              <>
+                <span>BOOK MY FREE CONSULTATION</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+
+          {/* Privacy Note */}
+          <div className="flex items-center justify-center gap-2 text-xs text-[#645F58] text-center pt-1">
+            <ShieldCheck className="w-4 h-4 text-bronze flex-shrink-0" />
+            <span>Your information is secure and will only be used to contact you regarding your project.</span>
           </div>
         </form>
       )}

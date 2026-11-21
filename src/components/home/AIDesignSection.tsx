@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Maximize2,
 } from "lucide-react";
-import { SITE_DATA } from "@/content/site";
+import { SITE_DATA, AISpatialWorkflowStep } from "@/content/site";
 
 export function AIDesignSection() {
   const steps = SITE_DATA.aiSpatialWorkflow;
@@ -74,7 +74,7 @@ export function AIDesignSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: 5 Interactive Step Cards */}
           <div className="lg:col-span-6 space-y-4">
-            {steps.map((s, idx) => {
+            {steps.map((s: AISpatialWorkflowStep, idx: number) => {
               const isSelected = activeStep === idx;
 
               return (

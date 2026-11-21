@@ -12,6 +12,7 @@ import {
   CheckCircle,
   Sparkles,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 import { SITE_DATA } from "@/content/site";
 
@@ -21,335 +22,376 @@ export function FinalConversion() {
     phone: "",
     email: "",
     city: "Nashik",
-    propertyType: "3BHK Apartment",
-    budgetRange: "₹18L – ₹30L",
-    requirement: "Full-Home Interior Design",
-    message: "",
+    propertyType: "3 BHK",
+    designScope: "Full Home Interior",
+    estimatedBudget: "₹15,00,000 – ₹25,00,000",
+    details: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [leadRef, setLeadRef] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (error) setError("");
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (errorMessage) setErrorMessage("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validatePhone = (phoneStr: string) => {
+    const digits = phoneStr.replace(/[\s\-\+\(\)]/g, "").slice(-10);
+    return /^[6-9]\d{9}$/.test(digits);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      setError("Please provide your name and phone number so we can reach you.");
+
+    if (!formData.name.trim()) {
+      setErrorMessage("Please enter your full name.");
+      return;
+    }
+
+    if (!validatePhone(formData.phone)) {
+      setErrorMessage("Please enter a valid 10-digit Indian mobile number (e.g. 98230 XXXXX).");
       return;
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/lead-capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || result.error) {
+        throw new Error(result.error || "Failed to submit request.");
+      }
+
+      setLeadRef(result.leadId || `XLV-${Date.now().toString().slice(-6)}`);
       setSubmitted(true);
-    }, 900);
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setErrorMessage(
+        err.message || "Unable to send your request. Please try again or chat with us on WhatsApp."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Xalveriq Team, I would like to book a free design consultation.\n\nName: ${formData.name || "Homeowner"}\nCity: ${formData.city}\nProperty: ${formData.propertyType}\nBudget: ${formData.budgetRange}\nRequirement: ${formData.requirement}`
+    `Hello Xalveriq Studio, I would like to book an initial design consultation.\n\nName: ${formData.name || "Homeowner"}\nLocation: ${formData.city}\nProperty: ${formData.propertyType}\nScope: ${formData.designScope}\nEstimated Budget: ${formData.estimatedBudget}\nNotes: ${formData.details || "Looking forward to speaking with your senior architect."}`
   );
 
   return (
     <section
       id="contact"
-      className="relative w-full py-24 sm:py-32 bg-[#0F0E0D] text-white overflow-hidden border-t border-white/10"
+      className="relative w-full py-24 sm:py-32 bg-[#FAF8F5] text-[#18181B] border-t border-[#E0D7C9] overflow-hidden"
     >
-      {/* Background Accent Gradients */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-bronze/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-bronze/5 rounded-full blur-[140px] pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left Column: Heading & Value Proposition */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-bronze/15 border border-bronze/30 text-xs font-semibold text-bronze uppercase tracking-widest">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Begin Your 45-Day Journey</span>
-              </div>
-
-              <h2 className="font-serif text-3xl sm:text-5xl font-normal text-white leading-tight tracking-tight">
-                Turn Your Empty Handover Into a Sanctuary.
-              </h2>
-
-              <p className="text-base sm:text-lg text-white/70 leading-relaxed">
-                Book a free design consultation with Xalveriq and receive a personalized 3D spatial concept for your home.
-              </p>
-            </div>
-
-            {/* Direct WhatsApp CTA Button */}
-            <div className="pt-2">
-              <a
-                href={`https://wa.me/${SITE_DATA.contact.whatsapp}?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 py-3.5 px-6 rounded-xl bg-[#25D366] text-[#0F0E0D] font-semibold text-sm hover:bg-[#20ba59] transition-all shadow-luxury hover:scale-[1.02]"
-              >
-                <MessageSquare className="w-4 h-4 fill-current" />
-                <span>Quick Chat on WhatsApp</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-
-            {/* Studio Contact Information */}
-            <div className="space-y-4 pt-6 border-t border-white/10 text-xs sm:text-sm text-white/80">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-bronze flex-shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-semibold text-white block">Nashik Flagship Studio:</span>
-                  <span className="text-white/60">{SITE_DATA.contact.studios[0].address}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-bronze flex-shrink-0" />
-                <div>
-                  <span className="font-semibold text-white mr-2">Direct Studio Phone:</span>
-                  <a
-                    href={`tel:${SITE_DATA.contact.phone.replace(/\s+/g, "")}`}
-                    className="text-bronze hover:underline"
-                  >
-                    {SITE_DATA.contact.phone}
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-bronze flex-shrink-0" />
-                <div>
-                  <span className="font-semibold text-white mr-2">Consultation Hours:</span>
-                  <span className="text-white/60">{SITE_DATA.contact.workingHours}</span>
-                </div>
-              </div>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-semibold text-bronze mb-3">
+            <span className="w-6 h-px bg-bronze" />
+            <span>INITIAL CONSULTATION</span>
           </div>
 
-          {/* Right Column: Lead Capture Form */}
-          <div className="lg:col-span-7">
-            <div className="p-8 sm:p-10 rounded-2xl bg-[#161514] border border-white/15 shadow-2xl relative">
-              <AnimatePresence mode="wait">
-                {submitted ? (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="py-12 text-center space-y-4"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-bronze/20 border-2 border-bronze text-bronze flex items-center justify-center mx-auto">
-                      <CheckCircle className="w-8 h-8" />
-                    </div>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#18181B] tracking-tight">
+            Tell Us About Your Dream Home.
+          </h2>
 
-                    <h3 className="font-serif text-2xl sm:text-3xl text-white">
-                      Consultation Request Received
+          <p className="mt-3 text-base sm:text-lg text-[#645F58] leading-relaxed">
+            Share a few details about your property and requirements. Our design team will contact you to schedule your consultation.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          {/* Form Container (Redesigned with generous breathing room & zero overlaps) */}
+          <div className="lg:col-span-8 bg-white border border-[#E0D7C9] rounded-2xl p-6 sm:p-10 shadow-card">
+            <AnimatePresence mode="wait">
+              {submitted ? (
+                <motion.div
+                  key="success-card"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="py-10 text-center space-y-5"
+                >
+                  <div className="w-16 h-16 rounded-full bg-bronze/10 border-2 border-bronze text-bronze flex items-center justify-center mx-auto">
+                    <CheckCircle className="w-8 h-8 text-bronze" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-xs font-mono uppercase tracking-widest text-bronze font-semibold">
+                      Reference ID: {leadRef}
+                    </span>
+                    <h3 className="font-serif text-2xl sm:text-3xl text-[#18181B]">
+                      Consultation Request Confirmed
                     </h3>
-
-                    <p className="text-sm text-white/70 max-w-md mx-auto leading-relaxed">
-                      Thank you, <span className="text-white font-medium">{formData.name}</span>. Our senior architectural lead in Nashik will review your requirements and contact you within 4 business hours.
+                    <p className="text-sm text-[#645F58] max-w-lg mx-auto leading-relaxed">
+                      Thank you, <span className="text-[#18181B] font-semibold">{formData.name}</span>. Our senior architectural lead in Nashik has received your requirements for your <span className="text-[#18181B] font-semibold">{formData.propertyType}</span> in <span className="text-[#18181B] font-semibold">{formData.city}</span> and will contact you within 4 business hours to schedule your session.
                     </p>
+                  </div>
 
-                    <div className="pt-4">
-                      <a
-                        href={`https://wa.me/${SITE_DATA.contact.whatsapp}?text=${encodeURIComponent(
-                          `Hi Xalveriq, I just requested a consultation for my ${formData.propertyType} in ${formData.city}.`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-bronze text-xs py-3 px-6 rounded-lg inline-flex items-center gap-2"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                        <span>Send Floor Plan on WhatsApp Now</span>
-                      </a>
+                  <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a
+                      href={`https://wa.me/${SITE_DATA.contact.whatsapp}?text=${encodeURIComponent(
+                        `Hi Xalveriq, I just booked a consultation (Ref: ${leadRef}) for my ${formData.propertyType} in ${formData.city}. Sending my floor plan.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-bronze text-xs py-3.5 px-6 rounded-lg inline-flex items-center gap-2"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Share Floor Plan on WhatsApp Now</span>
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => setSubmitted(false)}
+                      className="btn-outline text-xs py-3.5 px-6 rounded-lg"
+                    >
+                      Submit Another Query
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {errorMessage && (
+                    <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-start gap-2">
+                      <span className="font-bold">•</span>
+                      <span>{errorMessage}</span>
                     </div>
-                  </motion.div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="border-b border-white/10 pb-4">
-                      <h3 className="font-serif text-xl sm:text-2xl text-white">
-                        Book Free Design Consultation
-                      </h3>
-                      <p className="text-xs text-white/60 mt-1">
-                        Receive preliminary 3D spatial layout & itemized budget guidance.
-                      </p>
-                    </div>
+                  )}
 
-                    {error && (
-                      <div className="p-3 rounded-lg bg-red-900/40 border border-red-500/50 text-xs text-red-200">
-                        {error}
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Name */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          Your Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          required
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="e.g. Anand Kulkarni"
-                          className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors placeholder:text-white/30"
-                        />
-                      </div>
-
-                      {/* Phone */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          Phone Number (WhatsApp) *
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          required
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+91 98230 XXXXX"
-                          className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors placeholder:text-white/30"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Email */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="anand@example.com"
-                          className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors placeholder:text-white/30"
-                        />
-                      </div>
-
-                      {/* City */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          City / Region
-                        </label>
-                        <select
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg bg-[#1D1C1B] border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors"
-                        >
-                          <option value="Nashik">Nashik (Gangapur Rd, Anandwalli, etc.)</option>
-                          <option value="Mumbai">Mumbai & Suburbs</option>
-                          <option value="Pune">Pune & PCMC</option>
-                          <option value="Shirdi / Dhule">Shirdi / Dhule / North MH</option>
-                          <option value="Other">Other City</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Property Type */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          Property Type
-                        </label>
-                        <select
-                          name="propertyType"
-                          value={formData.propertyType}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg bg-[#1D1C1B] border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors"
-                        >
-                          <option value="2BHK Apartment">2 BHK Apartment</option>
-                          <option value="3BHK Apartment">3 BHK Apartment</option>
-                          <option value="4BHK / Penthouse">4 BHK / Penthouse</option>
-                          <option value="Independent Villa">Independent Villa / Bungalow</option>
-                          <option value="Commercial Office">Boutique Office / Studio</option>
-                        </select>
-                      </div>
-
-                      {/* Budget Range */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-white/80">
-                          Estimated Budget
-                        </label>
-                        <select
-                          name="budgetRange"
-                          value={formData.budgetRange}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg bg-[#1D1C1B] border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors"
-                        >
-                          <option value="₹10L – ₹18L">₹10L – ₹18L</option>
-                          <option value="₹18L – ₹30L">₹18L – ₹30L (Most Popular)</option>
-                          <option value="₹30L – ₹50L">₹30L – ₹50L</option>
-                          <option value="₹50L+">₹50L+ (Luxury Estate)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Scope / Requirement */}
+                  {/* Two-Column Grid for Fields 1 to 7 */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                    {/* 1. Full Name */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-white/80">
-                        Design Scope
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Full Name <span className="text-bronze">*</span>
                       </label>
-                      <select
-                        name="requirement"
-                        value={formData.requirement}
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-[#1D1C1B] border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors"
-                      >
-                        <option value="Full-Home Interior Design">Full-Home Interior Design (Turnkey)</option>
-                        <option value="Modular Kitchens & Pantries">Modular Kitchen & Dining</option>
-                        <option value="Wardrobes & Custom Dressing">Wardrobes & Storage Suites</option>
-                        <option value="Living & Dining Spaces">Living & Entertaining Lounge</option>
-                        <option value="Renovation & Civil Overhaul">Renovation & Civil Overhaul</option>
-                      </select>
-                    </div>
-
-                    {/* Message / Floor Plan Notes */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-white/80">
-                        Project Notes / Handover Status
-                      </label>
-                      <textarea
-                        name="message"
-                        rows={3}
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="e.g. Taking possession in Serene Meadows next month, have builder CAD drawing..."
-                        className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-bronze transition-colors placeholder:text-white/30 resize-none"
+                        placeholder="Enter your full name"
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
                       />
                     </div>
 
+                    {/* 2. Mobile / WhatsApp */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Mobile / WhatsApp Number <span className="text-bronze">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        required
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+91 XXXXX XXXXX"
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      />
+                    </div>
+
+                    {/* 3. Email Address */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email address"
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      />
+                    </div>
+
+                    {/* 4. City / Location */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        City / Location <span className="text-bronze">*</span>
+                      </label>
+                      <select
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      >
+                        <option value="Nashik">Nashik</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    {/* 5. Property Type */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Property Type <span className="text-bronze">*</span>
+                      </label>
+                      <select
+                        name="propertyType"
+                        value={formData.propertyType}
+                        onChange={handleChange}
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      >
+                        <option value="1 BHK">1 BHK</option>
+                        <option value="2 BHK">2 BHK</option>
+                        <option value="3 BHK">3 BHK</option>
+                        <option value="4 BHK">4 BHK</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Commercial Property">Commercial Property</option>
+                      </select>
+                    </div>
+
+                    {/* 6. Design Scope */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Design Scope <span className="text-bronze">*</span>
+                      </label>
+                      <select
+                        name="designScope"
+                        value={formData.designScope}
+                        onChange={handleChange}
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      >
+                        <option value="Full Home Interior">Full Home Interior</option>
+                        <option value="Modular Kitchen">Modular Kitchen</option>
+                        <option value="Living Room">Living Room</option>
+                        <option value="Bedroom">Bedroom</option>
+                        <option value="Bathroom">Bathroom</option>
+                        <option value="Renovation & Turnkey">Renovation & Turnkey</option>
+                        <option value="Complete Interior + Civil Work">Complete Interior + Civil Work</option>
+                      </select>
+                    </div>
+
+                    {/* 7. Estimated Budget (Full-width on sm for clarity or 2nd column) */}
+                    <div className="sm:col-span-2 space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                        Estimated Budget <span className="text-bronze">*</span>
+                      </label>
+                      <select
+                        name="estimatedBudget"
+                        value={formData.estimatedBudget}
+                        onChange={handleChange}
+                        className="w-full h-12 px-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all"
+                      >
+                        <option value="Under ₹5,00,000">Under ₹5,00,000</option>
+                        <option value="₹5,00,000 – ₹10,00,000">₹5,00,000 – ₹10,00,000</option>
+                        <option value="₹10,00,000 – ₹15,00,000">₹10,00,000 – ₹15,00,000</option>
+                        <option value="₹15,00,000 – ₹25,00,000">₹15,00,000 – ₹25,00,000 (Recommended for 2-3 BHK)</option>
+                        <option value="₹25,00,000 – ₹40,00,000">₹25,00,000 – ₹40,00,000 (Luxury Specification)</option>
+                        <option value="₹40,00,000 – ₹75,00,000">₹40,00,000 – ₹75,00,000 (Villas & Penthouses)</option>
+                        <option value="Above ₹75,00,000">Above ₹75,00,000 (High-End Architectural Estates)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* 8. Project Details (Properly Sized Multiline Textarea) */}
+                  <div className="space-y-1.5 pt-1">
+                    <label className="block text-xs font-semibold text-[#18181B] tracking-wide">
+                      Project Details <span className="text-xs font-normal text-[#645F58]">(Optional)</span>
+                    </label>
+                    <textarea
+                      name="details"
+                      rows={4}
+                      value={formData.details}
+                      onChange={handleChange}
+                      placeholder="Tell us about your apartment, society name, handover status, preferred design, or special requirements."
+                      className="w-full p-4 rounded-lg bg-[#FCFAF7] border border-[#E0D7C9] text-sm text-[#18181B] placeholder:text-[#9C958B] focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-all resize-y min-h-[110px]"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full btn-bronze py-4 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 shadow-luxury cursor-pointer"
+                      className="w-full btn-bronze py-4 rounded-lg font-semibold text-sm tracking-wide flex items-center justify-center gap-2 shadow-luxury cursor-pointer disabled:opacity-70"
                     >
                       {isSubmitting ? (
-                        <span>Submitting Request...</span>
+                        <span>Validating and Scheduling...</span>
                       ) : (
                         <>
-                          <span>Book Free Design Consultation</span>
-                          <Send className="w-4 h-4" />
+                          <span>BOOK MY FREE CONSULTATION</span>
+                          <ArrowRight className="w-4 h-4" />
                         </>
                       )}
                     </button>
+                  </div>
 
-                    <div className="text-[11px] text-center text-white/50 pt-1">
-                      🔒 Your information is private. Zero sales spam or endless cold calls.
-                    </div>
-                  </form>
-                )}
-              </AnimatePresence>
+                  {/* Privacy Note */}
+                  <div className="flex items-center justify-center gap-2 text-xs text-[#645F58] text-center pt-1">
+                    <ShieldCheck className="w-4 h-4 text-bronze flex-shrink-0" />
+                    <span>Your information is secure and will only be used to contact you regarding your project.</span>
+                  </div>
+                </form>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Consultation Benefits & Direct WhatsApp Handoff Column */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E0D7C9] shadow-soft space-y-5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-bronze block">
+                What to expect during consultation:
+              </span>
+
+              <ul className="space-y-3.5 text-xs sm:text-sm text-[#645F58]">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-bronze mt-2 flex-shrink-0" />
+                  <span>Review of your builder floor plan dimensions and sunlight angles.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-bronze mt-2 flex-shrink-0" />
+                  <span>Discussion of storage requirements, kitchen layout, and materials.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-bronze mt-2 flex-shrink-0" />
+                  <span>Preliminary 3D spatial layout suggestions and circulation ideas.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-bronze mt-2 flex-shrink-0" />
+                  <span>Transparent itemized BOQ estimate with fixed line-item pricing.</span>
+                </li>
+              </ul>
+
+              <div className="pt-4 border-t border-[#ECE5DA]">
+                <a
+                  href={`https://wa.me/${SITE_DATA.contact.whatsapp}?text=${whatsappMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2.5 py-3 px-4 rounded-lg bg-[#25D366] text-[#0F0E0D] font-semibold text-xs sm:text-sm hover:bg-[#20ba59] transition-all shadow-sm"
+                >
+                  <MessageSquare className="w-4 h-4 fill-current" />
+                  <span>Prefer WhatsApp? Chat Directly</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Hours Badge */}
+            <div className="p-5 rounded-xl bg-ivory-100 border border-[#E0D7C9] text-xs text-[#645F58] space-y-1.5">
+              <div className="flex items-center gap-2 text-[#18181B] font-semibold">
+                <Clock className="w-4 h-4 text-bronze" />
+                <span>Consultation Timings</span>
+              </div>
+              <p>{SITE_DATA.contact.workingHours}</p>
+              <p className="text-[11px] text-[#9C958B]">Home visits and digital video reviews conducted 6 days a week.</p>
             </div>
           </div>
         </div>

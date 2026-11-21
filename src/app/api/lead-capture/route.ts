@@ -4,11 +4,16 @@ interface LeadPayload {
   name: string;
   phone: string;
   email?: string;
+  city?: string;
+  propertyType?: string;
+  designScope?: string;
+  estimatedBudget?: string;
+  details?: string;
   whatsappConsent?: boolean;
-  bhk: string;
-  budgetRange: string;
-  timeline: string; // e.g. "Immediate (Next 30 days)", "1-3 Months", "3-6 Months", "Exploring"
-  locality: string;
+  bhk?: string;
+  budgetRange?: string;
+  timeline?: string;
+  locality?: string;
   notes?: string;
 }
 
@@ -18,68 +23,76 @@ export async function POST(req: NextRequest) {
 
     if (!data.name || !data.phone) {
       return NextResponse.json(
-        { error: "Name and phone number are required." },
+        { error: "Name and mobile number are required." },
         { status: 400 }
       );
     }
 
+    // Clean and validate Indian phone number (10 digits)
+    const cleanPhone = data.phone.replace(/[\s\-\+\(\)]/g, "").slice(-10);
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: "Please enter a valid 10-digit Indian mobile number." },
+        { status: 400 }
+      );
+    }
+
+    // Normalize property and budget info from either form schema
+    const property = data.propertyType || data.bhk || "Residential Property";
+    const budget = data.estimatedBudget || data.budgetRange || "₹18,00,000 – ₹30,00,000";
+    const city = data.city || data.locality || "Nashik";
+    const scope = data.designScope || "Full Home Interior";
+    const projectNotes = data.details || data.notes || "";
+
     // Smart Lead Scoring Algorithm
-    // Hot: Ready possession (within 60 days) OR budget >= ₹30 Lakhs
-    // Warm: Possession within 3-6 months OR budget ₹18-30 Lakhs
-    // Cold: Just exploring (> 6 months) OR lower budget
     let score: "Hot" | "Warm" | "Cold" = "Warm";
-    let priorityReason = "";
+    let priorityReason = "Standard Active Lead Pipeline";
 
-    const isUrgent =
-      data.timeline.includes("Immediate") ||
-      data.timeline.includes("30 days") ||
-      data.timeline.includes("1-2 Months");
+    const isHighTicket =
+      budget.includes("40,00,000") ||
+      budget.includes("75,00,000") ||
+      budget.includes("Above") ||
+      property.includes("Villa") ||
+      property.includes("Penthouse") ||
+      property.includes("4 BHK");
 
-    const isHighBudget =
-      data.budgetRange.includes("35L") ||
-      data.budgetRange.includes("50L") ||
-      data.budgetRange.includes("Haute") ||
-      data.bhk.includes("4 BHK") ||
-      data.bhk.includes("Penthouse");
-
-    if (isUrgent && isHighBudget) {
+    if (isHighTicket) {
       score = "Hot";
-      priorityReason = "Immediate Possession & High-Ticket Luxury Scope";
-    } else if (isUrgent || isHighBudget) {
-      score = "Hot";
-      priorityReason = "High Priority Scheduling - Fast Timeline / Prime Budget";
-    } else if (data.timeline.includes("Exploring")) {
-      score = "Cold";
-      priorityReason = "Early Research Stage";
-    } else {
+      priorityReason = "High-Ticket Luxury Villa / Penthouse Consultation";
+    } else if (budget.includes("Under ₹5,00,000")) {
       score = "Warm";
-      priorityReason = "Standard Active Lead Pipeline";
+      priorityReason = "Modular Scope";
     }
 
     const leadRecord = {
-      ...data,
+      id: `XLV-${Date.now().toString().slice(-6)}`,
+      name: data.name.trim(),
+      phone: `+91 ${cleanPhone}`,
+      email: data.email?.trim() || "",
+      city,
+      propertyType: property,
+      designScope: scope,
+      estimatedBudget: budget,
+      details: projectNotes,
       score,
       priorityReason,
       receivedAt: new Date().toISOString(),
-      id: `LEAD-PUN-${Date.now().toString().slice(-6)}`,
     };
 
-    console.log("New Xalveriq Lead Captured:", leadRecord);
+    console.log("New Xalveriq Consultation Lead Logged:", leadRecord);
 
     return NextResponse.json({
       success: true,
       leadId: leadRecord.id,
       score: leadRecord.score,
       message:
-        score === "Hot"
-          ? "Priority Consultation Request Received! A senior architect from our Pune studio will contact you within 2 business hours."
-          : "Consultation Request Confirmed! Our design team will review your requirements and reach out within 24 hours.",
+        "Your consultation request has been confirmed. Our senior architectural team will reach out to schedule your meeting.",
     });
   } catch (error) {
+    console.error("Lead capture error:", error);
     return NextResponse.json(
-      { error: "Failed to process lead request." },
+      { error: "Failed to process consultation request. Please try again or reach out on WhatsApp." },
       { status: 500 }
     );
   }
 }
-

@@ -1,49 +1,69 @@
 import { HeroSlider } from "@/components/home/HeroSlider";
 import { TrustBar } from "@/components/home/TrustBar";
+import { DesignPhilosophy } from "@/components/home/DesignPhilosophy";
 import { CategorySlider } from "@/components/home/CategorySlider";
 import { SignatureServices } from "@/components/home/SignatureServices";
+import { VisualGallery } from "@/components/home/VisualGallery";
+import { MaterialShowcase } from "@/components/home/MaterialShowcase";
 import { AIDesignSection } from "@/components/home/AIDesignSection";
 import { BeforeAfterSlider } from "@/components/home/BeforeAfterSlider";
 import { ProjectGrid } from "@/components/home/ProjectGrid";
 import { ProcessTimeline } from "@/components/home/ProcessTimeline";
+import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { TestimonialSlider } from "@/components/home/TestimonialSlider";
+import { StudioOffices } from "@/components/home/StudioOffices";
 import { FAQAccordion } from "@/components/home/FAQAccordion";
 import { FinalConversion } from "@/components/home/FinalConversion";
 
 export default function HomePage() {
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
-      {/* 2. Cinematic Hero Slider with 5 Auto-Playing Slides & Ken Burns Zoom */}
+      {/* 1. Cinematic Hero Slider with Auto-Playing Slides & Ken Burns Zoom */}
       <HeroSlider />
 
-      {/* 3. Trust & Credibility Strip with 4 Animated Counters */}
+      {/* 2. Trust & Credibility Strip with Animated Counters */}
       <TrustBar />
+
+      {/* 3. Guiding Design Philosophy (4 Pillars of Architectural Quiet Luxury) */}
+      <DesignPhilosophy />
 
       {/* 4. "Design Your Space" Horizontally Draggable Category Slider (10 Zones) */}
       <CategorySlider />
 
-      {/* 5. Signature Services Section (6 Alternating Image & Text Blocks) */}
+      {/* 5. Signature Services Section (Short, Customer-Focused, INR Pricing, Materials) */}
       <SignatureServices />
 
-      {/* 6. AI Spatial Design Section (Dark Futuristic Blueprint & 5-Step Workflow) */}
+      {/* 6. Visual Interior Gallery (Filtered by Living Room, Kitchen, Bedroom, Bathroom, Renovation, Villa) */}
+      <VisualGallery />
+
+      {/* 7. Architectural Material Showcase (Italian Marble, Teak, Quartz, Microcement, Fluted Glass, FENIX) */}
+      <MaterialShowcase />
+
+      {/* 8. AI Spatial Design Studio (Dark Contrast Section with Interactive Blueprint) */}
       <AIDesignSection />
 
-      {/* 7. Interactive Before / After Handover Transformation Slider */}
+      {/* 9. Multi-Room Before / After Transformation Slider (Living, Kitchen, Bedroom, Renovation) */}
       <BeforeAfterSlider />
 
-      {/* 8. Portfolio / Featured Projects Grid with Filters & Detail Modal */}
+      {/* 10. Portfolio / Featured Projects Grid with Filters & Detail Modal */}
       <ProjectGrid />
 
-      {/* 9. Six-Stage 45-Day Architecture Process Timeline */}
+      {/* 11. Six-Stage 45-Day Architecture Process Timeline */}
       <ProcessTimeline />
 
-      {/* 10. Verified Nashik Client Testimonials Slider */}
+      {/* 12. Why Choose Xalveriq (Architectural Rigor, Fixed Budget, 10-Yr Warranty, Dedicated PM) */}
+      <WhyChooseUs />
+
+      {/* 13. Verified Client Testimonials Slider */}
       <TestimonialSlider />
 
-      {/* 11. FAQ Accordion (6 Key Questions with Smooth Expand/Collapse) */}
+      {/* 14. Studio Office Information (Nashik Flagship Studio & Mumbai/Pune Client Desks) */}
+      <StudioOffices />
+
+      {/* 15. FAQ Accordion (Key Inquiries with Smooth Expand/Collapse) */}
       <FAQAccordion />
 
-      {/* 12. Final Dark Conversion Section with Lead Capture Form & WhatsApp Deep Link */}
+      {/* 16. Redesigned Initial Consultation Section with 8-Field Clean Form & WhatsApp Deep Link */}
       <FinalConversion />
     </div>
   );
