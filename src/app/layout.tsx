@@ -8,16 +8,16 @@ import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { SITE_DATA } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Xalveriq | Interior Design Studio in Pune",
+  title: "Xalveriq | AI-Powered Luxury Interior Architecture | Nashik",
   description:
-    "Homes designed around how you live. We are a Pune interior design studio planning, detailing, and building full-home interiors, modular kitchens, and custom wardrobes.",
+    "Futuristic AI-powered interior architecture. We transform raw builder handovers into bespoke, weightless luxury sanctuaries delivered in 45 days across Nashik, Mumbai, and Pune.",
   metadataBase: new URL(SITE_DATA.productionUrl),
-  authors: [{ name: "Xalveriq Interior Studio" }],
+  authors: [{ name: "Xalveriq Architecture & Design Studio" }],
   creator: "Xalveriq",
   openGraph: {
-    title: "Xalveriq | Interior Design Studio, Pune",
+    title: "Xalveriq | Futuristic Luxury Interior Architecture | Nashik",
     description:
-      "Homes designed around how you live. Full-home interiors, modular kitchens, and custom wardrobes in Pune.",
+      "Transforming raw builder handovers into bespoke luxury sanctuaries in 45 days. AI spatial design, modular kitchens, wardrobes & turnkey execution.",
     url: SITE_DATA.productionUrl,
     siteName: "Xalveriq",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
         width: 1200,
         height: 630,
-        alt: "Xalveriq Interior Design Studio Pune",
+        alt: "Xalveriq Luxury Interior Architecture Nashik",
       },
     ],
     locale: "en_IN",
@@ -44,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-paper text-ink antialiased selection:bg-terracotta/20 selection:text-ink relative">
+      <body className="bg-ivory text-charcoal antialiased selection:bg-bronze/20 selection:text-charcoal relative">
         <SmoothScroll>
           <Navbar />
           <main className="min-h-screen relative">{children}</main>

@@ -9,70 +9,99 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* Calm Architectural Paper & Ink Palette */
+        /* Warm Luxury Ivory, Bronze & Espresso Palette */
+        ivory: {
+          DEFAULT: "var(--ivory)",
+          50: "#FCFAF7",
+          100: "#F7F4EE",
+          200: "#EFEAE1",
+          300: "#E5DDD0",
+          card: "var(--surface)",
+        },
+        charcoal: {
+          DEFAULT: "var(--charcoal)",
+          soft: "#2A2A2E",
+          muted: "var(--text-muted)",
+        },
+        bronze: {
+          DEFAULT: "var(--bronze)",
+          hover: "var(--bronze-hover)",
+          light: "var(--bronze-light)",
+          dark: "#987247",
+        },
+        espresso: {
+          DEFAULT: "var(--espresso)",
+          soft: "#1A1918",
+          card: "#171615",
+          border: "#2A2825",
+        },
+        /* Semantic Aliases */
         bg: "var(--bg)",
         paper: {
-          DEFAULT: "var(--paper)",
-          alt: "var(--paper-alt)",
+          DEFAULT: "var(--ivory)",
+          alt: "var(--ivory-alt)",
           card: "var(--surface)",
         },
         ink: {
-          DEFAULT: "var(--ink)",
-          pure: "#1B1B1B",
-          subtle: "#2A2A2A",
+          DEFAULT: "var(--charcoal)",
+          pure: "#121110",
         },
         text: {
-          DEFAULT: "var(--text)",
+          DEFAULT: "var(--charcoal)",
           muted: "var(--text-muted)",
         },
         border: {
           DEFAULT: "var(--border)",
-          subtle: "rgba(221, 213, 200, 0.6)",
+          subtle: "rgba(224, 216, 203, 0.7)",
+          dark: "#2A2825",
         },
-        /* ONE ACCENT ONLY: Deep Terracotta */
-        terracotta: {
-          DEFAULT: "var(--terracotta)",
-          hover: "var(--terracotta-hover)",
-          light: "var(--terracotta-light)",
-        },
-        accent: "var(--terracotta)",
-
-        /* Backward-compat aliases mapped safely to calm palette */
-        "bg-alt": "var(--paper-alt)",
-        surface: "var(--surface)",
-        "surface-solid": "var(--surface)",
-        "text-muted": "var(--text-muted)",
         gold: {
-          DEFAULT: "var(--terracotta)",
-          400: "var(--terracotta)",
-          500: "var(--terracotta)",
+          DEFAULT: "var(--bronze)",
+          400: "var(--bronze)",
+          500: "var(--bronze)",
         },
-        violet: {
-          DEFAULT: "var(--terracotta)",
-          500: "var(--terracotta)",
-        },
-        cyan: {
-          DEFAULT: "var(--terracotta)",
-          400: "var(--terracotta)",
+        terracotta: {
+          DEFAULT: "var(--bronze)",
+          hover: "var(--bronze-hover)",
+          light: "var(--bronze-light)",
         },
       },
       fontFamily: {
-        serif: ["var(--font-fraunces)", "serif"],
-        display: ["var(--font-fraunces)", "serif"],
-        heading: ["var(--font-fraunces)", "serif"],
-        sans: ["var(--font-inter)", "sans-serif"],
+        serif: ["var(--font-fraunces)", "Georgia", "serif"],
+        display: ["var(--font-fraunces)", "Georgia", "serif"],
+        heading: ["var(--font-fraunces)", "Georgia", "serif"],
+        sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
       },
       borderRadius: {
-        DEFAULT: "4px",
-        sm: "2px",
-        md: "4px",
-        lg: "4px",
-        xl: "6px",
+        DEFAULT: "6px",
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px",
+        "2xl": "20px",
+        "3xl": "24px",
+        full: "9999px",
       },
       boxShadow: {
-        soft: "0 2px 10px rgba(27, 27, 27, 0.03)",
-        card: "0 4px 20px rgba(27, 27, 27, 0.04)",
-        "card-hover": "0 8px 30px rgba(27, 27, 27, 0.07)",
+        soft: "0 2px 12px rgba(18, 17, 16, 0.04)",
+        card: "0 8px 30px rgba(18, 17, 16, 0.06)",
+        "card-hover": "0 16px 40px rgba(18, 17, 16, 0.10)",
+        luxury: "0 24px 60px rgba(18, 17, 16, 0.12)",
+        glow: "0 0 35px rgba(197, 168, 128, 0.25)",
+      },
+      animation: {
+        "ken-burns": "kenburns 20s ease infinite alternate",
+        "fade-in-up": "fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+      },
+      keyframes: {
+        kenburns: {
+          "0%": { transform: "scale(1.0) translate(0%, 0%)" },
+          "100%": { transform: "scale(1.08) translate(-1%, -1%)" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
     },
   },

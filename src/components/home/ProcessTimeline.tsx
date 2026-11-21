@@ -1,117 +1,165 @@
-import { Calendar, BrainCircuit, Box, Hammer, KeyRound, Clock, ShieldCheck } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
+import { SITE_DATA } from "@/content/site";
 
 export function ProcessTimeline() {
-  const steps = [
-    {
-      num: "01",
-      title: "LiDAR Spatial Audit & Consultation",
-      duration: "Day 1 - 3",
-      icon: Calendar,
-      desc: "Our Pune architectural team visits your apartment with digital 3D laser meters to capture exact millimeter dimensions, MEP line positions, and natural sunlight orientation.",
-      badge: "In-Person at Pune Site",
-    },
-    {
-      num: "02",
-      title: "AI Concept & Aesthetic Modeling",
-      duration: "Day 4 - 7",
-      icon: BrainCircuit,
-      desc: "Our proprietary AI engine synthesizes your lifestyle, family dynamics, and preferred style into multi-angle mood boards, lighting studies, and initial spatial allocations.",
-      badge: "48-Hour AI Output",
-    },
-    {
-      num: "03",
-      title: "1:1 Virtual Reality & BOQ Finalization",
-      duration: "Day 8 - 14",
-      icon: Box,
-      desc: "Experience your complete home in full 3D VR at our Koregaon Park experience center. Approve material samples, hardware fittings (Blum/Hafele), and lock the final no-escalation BOQ.",
-      badge: "Zero-Surprise Pricing",
-    },
-    {
-      num: "04",
-      title: "German Factory Manufacturing & Civil Prep",
-      duration: "Day 15 - 35",
-      icon: Hammer,
-      desc: "While civil modifications, concealed false ceiling ducts, and Italian marble laying proceed on-site, all modular joinery is precision cut and edge-banded in our automated plant.",
-      badge: "Parallel Fast-Track",
-    },
-    {
-      num: "05",
-      title: "White-Glove Installation & Handover",
-      duration: "Day 36 - 45",
-      icon: KeyRound,
-      desc: "Modular units assemble on-site in under 10 days. Following a 120-point quality audit and professional industrial deep cleaning, we hand over your keys with a 10-year warranty certificate.",
-      badge: "₹2,500/Day Delay Penalty",
-    },
-  ];
+  const steps = SITE_DATA.processTimeline;
+  const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <section className="relative py-28 bg-[#12121A] overflow-hidden border-y border-[#252533]">
-      {/* Dramatic Ink Ambient Lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-r from-[#6D4AFF]/12 via-[#14A8D6]/10 to-[#B08A57]/12 rounded-full blur-[140px] pointer-events-none" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="process" className="relative w-full py-24 sm:py-32 bg-[#FAF8F5] border-t border-[#E0D7C9]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/10 text-[#58C8EB] text-xs font-bold uppercase tracking-wider">
-            <Clock className="w-3.5 h-3.5" />
-            <span>The 45-Day Handover Protocol</span>
+        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-semibold text-bronze mb-3">
+            <span className="w-6 h-px bg-bronze" />
+            <span>The 45-Day Architecture Protocol</span>
+            <span className="w-6 h-px bg-bronze" />
           </div>
-          <h2 className="text-3xl sm:text-5xl font-bold text-[#FAF7F2] tracking-tight">
-            Predictable Perfection. <br />
-            <span className="text-gold-gradient">From Day 1 to Day 45.</span>
+
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#18181B] tracking-tight">
+            How We Transform Your Space
           </h2>
-          <p className="text-sm sm:text-base text-[#A9A49C] font-normal leading-relaxed">
-            We eliminated contractor delays by synchronizing factory automation with on-site civil works. Backed by our written ₹2,500/day penalty clause.
+
+          <p className="mt-4 text-base sm:text-lg text-[#645F58] leading-relaxed">
+            A disciplined six-stage journey from bare builder handover to key delivery, backed by milestone tracking and strict schedule enforcement.
           </p>
         </div>
 
-        {/* Process Steps */}
-        <div className="relative">
-          {/* Connecting line for desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#B08A57]/40 to-transparent -translate-y-12 z-0" />
+        {/* Desktop Interactive Horizontal Timeline */}
+        <div className="hidden lg:block relative mb-16">
+          {/* Progress Connecting Line */}
+          <div className="absolute top-7 left-12 right-12 h-[2px] bg-[#E0D7C9]">
+            <motion.div
+              className="h-full bg-bronze"
+              initial={{ width: "16%" }}
+              animate={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            />
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 relative z-10">
-            {steps.map((step, idx) => {
-              const Icon = step.icon;
+          {/* 6 Step Nodes */}
+          <div className="relative z-10 grid grid-cols-6 gap-4">
+            {steps.map((st, idx) => {
+              const isPassed = idx <= activeStep;
+              const isSelected = idx === activeStep;
+
               return (
                 <div
-                  key={idx}
-                  className="group relative rounded-3xl p-6 bg-[#1A1A24]/90 border border-[#2A2A38] hover:border-[#B08A57]/60 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between shadow-lg"
+                  key={st.number}
+                  onClick={() => setActiveStep(idx)}
+                  className="flex flex-col items-center text-center cursor-pointer group"
                 >
-                  <div>
-                    {/* Step Number & Icon */}
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="w-12 h-12 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-[#DFBA87] group-hover:bg-[#B08A57] group-hover:text-[#12121A] transition-all">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <span className="font-display font-bold text-2xl text-[#686877] group-hover:text-[#FAF7F2] transition-colors">
-                        {step.num}
-                      </span>
-                    </div>
-
-                    {/* Timeline Badge */}
-                    <div className="inline-block px-2.5 py-1 rounded-md bg-[#6D4AFF]/20 border border-[#6D4AFF]/30 text-[#A992FF] text-[10px] font-mono font-bold mb-3">
-                      {step.duration}
-                    </div>
-
-                    {/* Title & Desc */}
-                    <h3 className="text-sm font-bold text-[#FAF7F2] mb-2 leading-snug">
-                      {step.title}
-                    </h3>
-                    <p className="text-xs text-[#A9A49C] leading-relaxed font-normal mb-4">
-                      {step.desc}
-                    </p>
+                  {/* Step Number Dot */}
+                  <div
+                    className={`w-14 h-14 rounded-full flex items-center justify-center font-mono text-sm font-semibold transition-all duration-300 border-2 ${
+                      isSelected
+                        ? "bg-bronze text-white border-bronze scale-110 shadow-luxury"
+                        : isPassed
+                        ? "bg-[#18181B] text-white border-[#18181B]"
+                        : "bg-white text-[#645F58] border-[#E0D7C9] group-hover:border-bronze"
+                    }`}
+                  >
+                    {st.number}
                   </div>
 
-                  {/* Guarantee Pill */}
-                  <div className="pt-3 border-t border-[#2A2A38] flex items-center gap-1.5 text-[10px] text-[#DFBA87] font-medium">
-                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                    <span>{step.badge}</span>
-                  </div>
+                  <span className="mt-3 text-xs font-semibold uppercase tracking-wider text-bronze">
+                    {st.duration}
+                  </span>
+
+                  <h3
+                    className={`mt-1 font-serif text-base transition-colors ${
+                      isSelected ? "text-[#18181B] font-medium" : "text-[#645F58] group-hover:text-[#18181B]"
+                    }`}
+                  >
+                    {st.title}
+                  </h3>
                 </div>
               );
             })}
           </div>
+
+          {/* Active Step Showcase Card */}
+          <motion.div
+            key={activeStep}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="mt-12 p-8 rounded-2xl bg-white border border-[#E0D7C9] shadow-card flex flex-col md:flex-row items-center justify-between gap-8"
+          >
+            <div className="space-y-2 max-w-2xl">
+              <div className="flex items-center gap-3">
+                <span className="px-3 py-1 rounded bg-ivory-100 border border-[#E0D7C9] text-xs font-semibold text-bronze uppercase">
+                  Stage {steps[activeStep].number} • {steps[activeStep].duration}
+                </span>
+                <span className="text-xs text-[#645F58] italic">
+                  {steps[activeStep].subtitle}
+                </span>
+              </div>
+              <h4 className="font-serif text-2xl text-[#18181B]">
+                {steps[activeStep].title}
+              </h4>
+              <p className="text-sm text-[#645F58] leading-relaxed">
+                {steps[activeStep].description}
+              </p>
+            </div>
+
+            <div className="p-5 rounded-xl bg-ivory-50 border border-[#ECE5DA] flex flex-col gap-2 min-w-[280px]">
+              <span className="text-[11px] font-semibold text-bronze uppercase tracking-wider">
+                Key Milestone Deliverable:
+              </span>
+              <div className="flex items-start gap-2 text-xs font-medium text-[#18181B]">
+                <CheckCircle2 className="w-4 h-4 text-bronze flex-shrink-0 mt-0.5" />
+                <span>{steps[activeStep].deliverable}</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Mobile / Tablet Vertical Timeline */}
+        <div className="lg:hidden relative pl-6 space-y-10 border-l-2 border-[#E0D7C9] ml-4">
+          {steps.map((st, idx) => (
+            <motion.div
+              key={st.number}
+              initial={{ opacity: 0, x: -15 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.08 }}
+              className="relative group"
+            >
+              {/* Step indicator node */}
+              <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-bronze text-white font-mono text-xs flex items-center justify-center font-semibold shadow-sm">
+                {st.number}
+              </div>
+
+              <div className="luxury-card p-5 space-y-2 bg-white">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono text-bronze uppercase tracking-wider">
+                    {st.duration}
+                  </span>
+                  <span className="text-[10px] text-[#645F58] italic">
+                    {st.subtitle}
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-lg text-[#18181B]">
+                  {st.title}
+                </h3>
+
+                <p className="text-xs text-[#645F58] leading-relaxed">
+                  {st.description}
+                </p>
+
+                <div className="pt-2 text-xs text-[#18181B] font-medium flex items-center gap-1.5 border-t border-[#ECE5DA]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-bronze" />
+                  <span>{st.deliverable}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

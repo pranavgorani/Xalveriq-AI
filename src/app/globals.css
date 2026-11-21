@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,21 +6,34 @@
 
 @layer base {
   :root {
-    /* Calm Paper & Ink Architectural Palette */
-    --bg: #F6F2EA;
-    --paper: #F6F2EA;
-    --paper-alt: #EFE9DF;
+    /* Warm Ivory & Luxury Bronze Architectural Palette */
+    --ivory: #FAF8F5;
+    --ivory-alt: #F3ECE1;
     --surface: #FFFFFF;
-    --text: #1B1B1B;
-    --ink: #1B1B1B;
-    --text-muted: #6B665E;
-    --border: #DDD5C8;
-    --border-subtle: #E8E2D6;
+    --charcoal: #18181B;
+    --text: #18181B;
+    --ink: #18181B;
+    --text-muted: #645F58;
+    --border: #E0D7C9;
+    --border-subtle: #ECE5DA;
 
-    /* ONE ACCENT ONLY: Deep Terracotta */
-    --terracotta: #B5573A;
-    --terracotta-hover: #9E482E;
-    --terracotta-light: #F4EAE6;
+    /* Bronze / Champagne Gold Accent */
+    --bronze: #B89368;
+    --bronze-hover: #9E7B52;
+    --bronze-light: #F7F1E8;
+    --terracotta: #B89368;
+    --terracotta-hover: #9E7B52;
+    --terracotta-light: #F7F1E8;
+
+    /* Deep Espresso & Dark Slate for Cinematic Contrast */
+    --espresso: #0F0E0D;
+    --espresso-soft: #181716;
+    --espresso-card: #1D1C1B;
+
+    /* Semantic background mapping */
+    --bg: #FAF8F5;
+    --paper: #FAF8F5;
+    --paper-alt: #F3ECE1;
 
     /* Font Variables */
     --font-fraunces: 'Fraunces', Georgia, serif;
@@ -28,53 +41,55 @@
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: var(--ivory);
+    color: var(--charcoal);
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     line-height: 1.65;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    selection-background-color: #E8D3CB;
-    selection-color: #1B1B1B;
   }
 
-  /* Headings: Fraunces in regular weight, not bold */
+  /* Headings: Fraunces serif for editorial luxury */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-fraunces), Georgia, serif;
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.015em;
-    color: var(--text);
+    color: inherit;
   }
 
   p {
     color: var(--text-muted);
-    font-size: 0.9375rem; /* 15px */
+    font-size: 0.9375rem;
     line-height: 1.65;
   }
 }
 
-/* Simple, Restrained Studio Utilities */
-.btn-terracotta {
+/* Luxury Interactive Buttons */
+.btn-bronze {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--terracotta);
+  padding: 0.875rem 1.75rem;
+  background-color: var(--bronze);
   color: #FFFFFF;
-  border: 1px solid var(--terracotta);
-  border-radius: 4px;
+  border: 1px solid var(--bronze);
+  border-radius: 8px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(184, 147, 104, 0.25);
 }
 
-.btn-terracotta:hover {
-  background-color: var(--terracotta-hover);
-  border-color: var(--terracotta-hover);
+.btn-bronze:hover {
+  background-color: var(--bronze-hover);
+  border-color: var(--bronze-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(184, 147, 104, 0.35);
 }
 
 .btn-outline {
@@ -82,142 +97,90 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.75rem;
   background-color: #FFFFFF;
-  color: var(--text);
+  color: var(--charcoal);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-outline:hover {
-  border-color: var(--text);
-  background-color: var(--paper);
+  border-color: var(--charcoal);
+  background-color: var(--ivory);
+  transform: translateY(-1px);
 }
 
-.link-terracotta {
-  color: var(--terracotta);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  transition: color 0.2s ease;
-}
-
-.link-terracotta:hover {
-  color: var(--terracotta-hover);
-}
-
-/* Architectural Plan-Note Label Style */
-.plan-note {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.6875rem; /* 11px */
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-
-/* Architectural line divider with subtle hatch mark */
-.arch-divider {
-  border: 0;
-  border-top: 1px solid var(--border);
-  position: relative;
-  margin: 3rem 0;
-}
-
-/* Material swatch pill */
-.swatch-chip {
+.btn-outline-light {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.625rem;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  font-size: 0.6875rem;
-  color: var(--text);
-}
-
-.swatch-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 1px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Restrained image hover zoom (max 3%) */
-.hover-zoom-restrained {
-  transition: transform 0.4s ease-out;
-}
-
-.hover-zoom-restrained:hover {
-  transform: scale(1.025);
-}
-
-/* Studio flat card with 1px border */
-.studio-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.studio-card:hover {
-  border-color: #1B1B1B;
-  box-shadow: 0 4px 16px rgba(27, 27, 27, 0.04);
-}
-
-/* Clean Form Inputs */
-.studio-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
   font-size: 0.875rem;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s ease;
+  font-weight: 500;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.studio-input:focus {
-  border-color: var(--terracotta);
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: #FFFFFF;
+  transform: translateY(-1px);
 }
 
-.studio-input::placeholder {
-  color: #9C958B;
+/* Luxury Cards */
+.luxury-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(24, 24, 27, 0.04);
 }
 
-/* Backward compatibility classes safely flattened */
-.btn-primary-gradient {
-  background-color: var(--terracotta) !important;
-  color: #FFFFFF !important;
-  border-radius: 4px !important;
-  background-image: none !important;
+.luxury-card:hover {
+  border-color: #C5A880;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(24, 24, 27, 0.08);
 }
 
-.btn-secondary-light {
-  background-color: #FFFFFF !important;
-  border: 1px solid var(--border) !important;
-  color: var(--text) !important;
-  border-radius: 4px !important;
+/* Dark Section Glass & Blueprint Cards */
+.dark-glass-card {
+  background: rgba(24, 23, 22, 0.7);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-panel, .glass-card-gold, .glass-card-violet {
-  background: #FFFFFF !important;
-  border: 1px solid var(--border) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: none !important;
-  border-radius: 4px !important;
+.dark-glass-card:hover {
+  border-color: rgba(197, 168, 128, 0.45);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-.text-gold-gradient, .text-ai-gradient {
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: unset !important;
-  color: var(--text) !important;
+/* Hide scrollbar for category horizontal swipe */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Floating WhatsApp pulse */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.pulse-badge {
+  animation: pulse-subtle 3s ease-in-out infinite;
 }
